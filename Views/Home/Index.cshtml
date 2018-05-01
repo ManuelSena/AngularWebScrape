@@ -1,0 +1,87 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+@section scripts{
+
+    <script>
+        (function () {
+            //factory must return an object
+            angular.module(appName).factory("addressApi", AddressApi)
+                                //axios   //promises
+            AddressApi.$inject = ["$http", "$q"];
+
+            function AddressApi($http, $q) {
+
+                var srv = {
+                    getAll: _getAll
+                }
+
+                function _getAll() {
+                    var defr = $q.defer();
+                    var itms = [
+                        { question: "Who are you?", answer: "I am the walrus" },
+                        { question: "Where are you?", answer: "I am here" },
+                        { question: "Who are you?", answer: "I am you" }
+                    ];
+                    defr.resolve(itms);
+
+                    //$http({
+                    //    method: "GET",
+                    //    dataType: "json",
+                    //    //you will use your the api your working on normally
+                    //    url: "https://teamprospect.azurewebsites.net/api/faqs"
+                    //}).then(function (response) {
+                    //    defr.resolve(response.data);
+                    //    }).catch(function (err) {
+                    //        def.reject(err)
+                    //    })
+
+                    return defr.promise;
+                }
+                return srv;
+            }
+        })();
+
+        (function () {
+            angular.module(appName).controller("testCtrl", TestController);
+            TestController.$inject = ["$scope", "addressApi"];
+
+            function TestController($scope, addressApi) {
+                //$scope.myTest2 ="hi :("
+                var state = this;
+                state.faqs = [];
+                state.$onInit = _init;
+
+                function _init() {
+                    state.myTest = "hello World!";
+                    addressApi.getAll().then(function (response) {
+                        state.faqs = response.items;
+                        console.log(response);
+                    });
+                }
+            }
+        })();
+    </script>
+
+}
+<h2>Index</h2>
+
+<div ng-controller="testCtrl as tc">
+    <form name="frm">
+        <div class="form-group">
+            @*two way binding*@
+            <input name="myTest" ng-model="tc.myTest" type="text" />
+            <div ng-show="{{$errors.frm.myTest.$dirty}}"></div>
+        </div>
+        <div>
+            @*two way binding*@
+            <strong>Data:</strong> {{tc.myTest}}
+        </div>
+        <div ng-repeat="itm in tc.faqs">
+            <b>Q: {{itm.question}}</b>
+            A: {{itm.answer}}
+        </div>
+    </form>
+</div>

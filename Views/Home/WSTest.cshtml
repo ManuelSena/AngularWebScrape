@@ -1,0 +1,7 @@
+﻿@model AngularJSDemo.Controllers.WSResult
+@{
+    ViewBag.Title = "WSTest";
+}
+<h2>WSTest</h2>
+@*@Model.Headlines*@
+@Html.Raw(HttpUtility.HtmlDecode(@Model.Headlines))
